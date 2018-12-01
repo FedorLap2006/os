@@ -5,6 +5,8 @@ Bochs-oriented OS for older computers and fun
 * IDE Controller supports for Hard Drive.
 * SATA not support
 * ACPI not support
+* PCI not support
+* VESA BIOS LFB on startup only
 * OS written just for fun.
 
 P.S. На русском.
