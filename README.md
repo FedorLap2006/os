@@ -11,7 +11,7 @@ Bochs-oriented OS for older computers and fun
 
 # How install it
 
-* First, install bochs with config:
+First, install bochs with config:
 
 1. ./configure --enable-x86-64 --enable-debugger --enable-disasm --enable-readline --with-all-libs --with-x11
 2. make
