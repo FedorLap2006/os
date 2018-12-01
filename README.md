@@ -1,4 +1,4 @@
-# os
+# Preamble
 Bochs-oriented OS for older computers and fun
 
 * This OS supports for 386-486SX processors.
