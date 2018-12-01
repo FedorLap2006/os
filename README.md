@@ -31,4 +31,6 @@ First, install bochs with config:
 11. mkdir disk
 12. sudo mount disk.img -t vfat -o loop,rw,uid="`whoami`",sync,offset=$[1048576] disk/
 
+# Special notes
+
 P.S. На русском.
