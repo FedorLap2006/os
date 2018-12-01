@@ -29,6 +29,6 @@ First, install bochs with config:
 9. mkfs.fat -F32 /dev/loop1
 10. losetup -d /dev/loop1
 11. mkdir disk
-12. sudo mount disk.img -t vfat -o loop,rw,uid="__my_uid__",sync,offset=$[1048576] disk/
+12. sudo mount disk.img -t vfat -o loop,rw,uid="`whoami`",sync,offset=$[1048576] disk/
 
 P.S. На русском.
