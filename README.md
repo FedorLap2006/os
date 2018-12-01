@@ -24,9 +24,9 @@ First, install bochs with config:
   
 5. dd if=/dev/zero of=disk.img bs=1024 count=262144
 6. fdisk disk.img
-7. Commands: n / p / 1 / 2048 / 524287 / t / 0B / w
+7. Commands: n / p / 1 / 2048 / 524287 / t / 06 / w
 8. losetup -o 1048576 /dev/loop1 disk.img
-9. mkfs.fat -F32 /dev/loop1
+9. mkfs.fat -F16 /dev/loop1
 10. losetup -d /dev/loop1
 11. mkdir disk
 12. sudo mount disk.img -t vfat -o loop,rw,uid="`whoami`",sync,offset=$[1048576] disk/
