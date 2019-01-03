@@ -18,42 +18,59 @@ void cls(unsigned char color) {
     cursor.max_chars     = 0;
 
     desktop_color = color;
+    desktop_button_start = 0;
+    win_start = 0;
 }
 
 // На рабочий стол было нажатие
 void desktop_mousedown() {
 
-    /*
-    colorat(0,0,0xffffff,0);
-    print_int(cursor.mouse_x);
-    print(", ");
-    print_int(cursor.mouse_y);
-    */
+    int x = cursor.mouse_x,
+        y = cursor.mouse_y;
+
+    // Нажато на кнопку пуск?
+    if (x >= 3 && x <= 75 && y >= 458 && y <= 477) {
+
+        if (desktop_button_start) {
+
+            desktop_button_start = 0;
+
+            if (win_start) {
+                window_close(win_start);
+                win_start = 0;
+            }
+
+        } else {
+
+            desktop_button_start = 1;
+
+            win_start = window_create(3, 300, 200, 130, "Выбор программ");
+            window_repaint(win_start);
+
+            allwin[ win_start ].panel = 0;
+        }
+
+        panel_button_start();
+    }
 }
 
-// Панель снизу
-void panel_repaint() {
-
-    int t = 454, id, num = 0;
-
-    color(0, -1);
-
-    block(0, t,   639, t,   0);
-    block(0, t+1, 639, t+1, 15);
-    block(0, t+2, 639, 479, 7);
+// Кнопка "Пуск"
+void panel_button_start() {
 
     // Кнопка пуск
-    button(3, 458, 72, 19, 0);
+    button(3, 458, 72, 19, desktop_button_start);
 
     // Лого
     block(6, 461, 11, 466, 4); block(13, 461, 18, 466, 2);
     block(6, 468, 11, 473, 1); block(13, 468, 18, 473, 6);
     print_at(3 + 20, 459 + 1, "Запуск");
+}
 
-    // Вертикальная полоса-разделитель
-    block(78, 458, 78, 477, 8);
-    block(79, 458, 79, 477, 15);
-
+// Перерисовать панель задач
+void panel_task_repaint() {
+    
+    int id, num = 0;
+        
     // Параметры вывода
     color(0, -1);
     cursor.max_chars = 13;
@@ -83,18 +100,41 @@ void panel_repaint() {
     cursor.max_chars = 0;
 }
 
+// Панель снизу
+void panel_repaint() {
+
+    int t = 454;
+
+    color(0, -1);
+
+    block(0, t,   639, t,   0);
+    block(0, t+1, 639, t+1, 15);
+    block(0, t+2, 639, 479, 7);
+
+    panel_button_start();
+
+    // Вертикальная полоса-разделитель
+    block(78, 458, 78, 477, 8);
+    block(79, 458, 79, 477, 15);
+
+    panel_task_repaint();
+}
+
 // Перерисовать область заднего фона
 void desktop_repaint_bg(int x1, int y1, int w, int h) {
 
     block(x1, y1, x1 + w, y1 + h, 3);
 
+    // Проверить захваченные края окон
+
     // Если область захватила панель
-    if (y1 + h >= 450 || y1 >= 450)
+    if (y1 + h >= 450 || y1 >= 450) {
         panel_repaint();
+    }
 }
 
-// Нарисовать линии перемещения
-void draw_mover() {
+// Скопировать область за линиями перемещений
+void copy_mover() {
 
     int i;
     struct window* w = & allwin[ mover_active ];
@@ -106,16 +146,22 @@ void draw_mover() {
     mover_height = w->y2 - w->y1;
 
     for (i = 0; i <= mover_width; i++) {
-
         bgmover[0][i] = get_point(w->x1 + i, w->y1);
         bgmover[1][i] = get_point(w->x1 + i, w->y2);
     }
-
     for (i = 0; i <= mover_height; i++) {
-
         bgmover[2][i] = get_point(w->x1, w->y1 + i);
         bgmover[3][i] = get_point(w->x2, w->y1 + i);
     }
+}
+
+// Нарисовать линии перемещения
+void draw_mover() {
+
+    int i;
+    struct window* w = & allwin[ mover_active ];
+
+    copy_mover();
 
     for (i = 0; i <= mover_width; i += 2) {
         pset(w->x1 + i, w->y1, 15);
@@ -154,7 +200,6 @@ void make_desktop() {
     // Назначение событий на основной рабочий стол
     window_event(desktop, EVENT_MOUSEDOWN, & desktop_mousedown);
 }
-
 
 // Отослать события нажатия мыши
 // key = 1 | 2 | 4
@@ -195,9 +240,9 @@ void push_event_click(int key, int dir) {
 
         if (key == PS2_BUTTON_LEFT) {
 
-            // Активация нового окна при левом кнопке мыши
-            if (w->active == 0) {
+            if (w->active == 0 && dir) {
 
+                // Активация нового окна при левом кнопке мыши
                 window_activate(hwnd);
 
                 // Перерисовка предыдущего активного окна
@@ -207,8 +252,8 @@ void push_event_click(int key, int dir) {
                     }
                 }
 
-                window_repaint(hwnd);
-                panel_repaint();
+                window_repaint(hwnd);   // Перерисовать окно
+                panel_task_repaint();   // И панель задач
             }
 
             // Нажат заголовок окна (LKM) -- если оно есть
@@ -231,11 +276,12 @@ void push_event_click(int key, int dir) {
         if (hit_title && dir) {
 
             mover_active = hwnd;
+            mover_touch  = 0;
 
             mover_init_x1 = w->x1;
             mover_init_y1 = w->y1;
 
-            draw_mover();
+            copy_mover();
         }
     }
 
@@ -245,10 +291,11 @@ void push_event_click(int key, int dir) {
         restore_mover();
 
         // Перерисовать старую область
-        desktop_repaint_bg(mover_init_x1, mover_init_y1, mover_width, mover_height);
+        if (mover_touch) {
 
-        // перерисовать окно
-        window_repaint(mover_active);
+            desktop_repaint_bg(mover_init_x1, mover_init_y1, mover_width, mover_height);
+            window_repaint(mover_active);
+        }
 
         mover_active = 0;
     }

@@ -27,7 +27,7 @@ void init_windows() {
 void window_init(int id, int x, int y, int w, int h, char* title) {
 
     struct window* win = & allwin[ id ];
-    
+
     h += 20; // Учет заголовка
 
     win->x1 = x;
@@ -37,12 +37,24 @@ void window_init(int id, int x, int y, int w, int h, char* title) {
 
     win->w = w;
     win->h = h;
-    
+
     win->title = title;
     win->bgcolor = 7;
 
     win->panel = 1;
     win->state = WINDOW_STATE_DEFAULT;
+}
+
+// Активировать новое окно
+void window_activate(int id) {
+
+    int i;
+
+    for (i = 1; i < WINDOW_MAX; i++) {
+        allwin[i].active = 0;
+    }
+
+    allwin[id].active = 1;
 }
 
 // Создать окно в системе
@@ -61,11 +73,30 @@ int window_create(int x, int y, int w, int h, char* title) {
             allwin[id].active = 0;
 
             window_init(id, x-2, y-2, w+4, h+4, title);
+            window_activate(id);
+
             return id;
         }
     }
 
     return 0;
+}
+
+// Закрыть окно
+void window_close(int hwnd) {
+    
+    struct window* win = & allwin[ hwnd ];
+    
+    int x1 = win->x1, 
+        y1 = win->y1, 
+        w = win->w, 
+        h = win->h;
+
+    // Очистить информацию об окне
+    bzero(win, sizeof(struct window));
+    
+    // Очистить экран за окном
+    desktop_repaint_bg(x1, y1, w, h);
 }
 
 // Нарисовать кнопку
@@ -136,18 +167,6 @@ void window_repaint(int id) {
     // Отправка repaint
     if (win->event_repaint)
         win->event_repaint();
-}
-
-// Активировать новое окно
-void window_activate(int id) {
-
-    int i;
-
-    for (i = 1; i < WINDOW_MAX; i++) {
-        allwin[i].active = 0;
-    }
-
-    allwin[id].active = 1;
 }
 
 // Назначить событие

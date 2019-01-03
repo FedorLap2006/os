@@ -7,7 +7,9 @@
 char    bgmover[4][640];
 int     mover_x1, mover_y1,
         mover_init_x1, mover_init_y1, // x,y при первом клике
-        mover_width, mover_height, mover_active;
+        mover_width, mover_height, 
+        mover_touch,        // Было перемещение
+        mover_active;
 
 int     ps2_pressed;        // =1 Мышь нажата
 int     ps2_mouse_state;    // Текущие нажатые биты
@@ -128,6 +130,9 @@ void pic_ps2mouse() {
     // Знаковое расширение (x,y)
     if (cmd & 0x10) x = -((x ^ 0xFF) + 1);
     if (cmd & 0x20) y = -((y ^ 0xFF) + 1);
+    
+    int xp = xn, 
+        yp = yn;
 
     xn += x;
     yn -= y;
@@ -136,9 +141,12 @@ void pic_ps2mouse() {
     if (yn < 0)   yn = 0;
     if (xn > 639) xn = 639;
     if (yn > 479) yn = 479;
+    
+    int dx = xn - xp,
+        dy = yp - yn;
 
     // Есть перемещение
-    if (x || y) {
+    if (dx || dy) {
 
         // @todo найти области, куда попала мышь при перемещении и отослать event
 
@@ -147,10 +155,11 @@ void pic_ps2mouse() {
             restore_mover();
 
             w = & allwin[ mover_active ];
+        
+            w->x1 += dx; w->x2 += dx;
+            w->y1 -= dy; w->y2 -= dy;
 
-            w->x1 += x; w->x2 += x;
-            w->y1 -= y; w->y2 -= y;
-
+            mover_touch = 1;
             draw_mover();
         }
     }

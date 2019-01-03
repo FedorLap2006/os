@@ -136,6 +136,5 @@ void make_miner() {
     window_event(miner, EVENT_MOUSEDOWN, & miner_mouseclick);
     
     // Активация нового окна и перерисовка
-    window_activate(miner); 
     window_repaint(miner);
 }
