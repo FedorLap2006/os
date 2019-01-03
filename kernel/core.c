@@ -113,8 +113,8 @@ void init(int fsblock) {
     init_paging();          // Страничная адресация (в последнюю очередь)
 
     // Проверка на наличие файловых систем
-    if (fat_found == 0 && fsblock) { 
-        colorat(8,8,0xffffff,0); print("Panic! FAT not found"); for(;;); 
+    if (fat_found == 0 && fsblock) {
+        colorat(8,8,0xffffff,0); print("Panic! FAT not found"); for(;;);
     }
     fs_init(0);             // Установка основной fs
 }

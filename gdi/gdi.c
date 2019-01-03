@@ -1,6 +1,17 @@
 /*
  * API вызовы на отрисовку
  */
+ 
+void gdi_pset(int hwnd, int x, int y, uint32_t color) {
+    
+    struct window* win = & allwin[ hwnd ];
+
+    // Коррекция границ
+    if (x < 0) x = 0;
+    if (x >= win->w - 4) x = win->w - 4;
+
+    pset(win->x1 + 2 + x, win->y1 + 22 + y, color);    
+}
 
 void gdi_fillrect(int hwnd, int x1, int y1, int x2, int y2, uint32_t color) {
 

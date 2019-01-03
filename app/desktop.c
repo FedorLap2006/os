@@ -154,3 +154,102 @@ void make_desktop() {
     // Назначение событий на основной рабочий стол
     window_event(desktop, EVENT_MOUSEDOWN, & desktop_mousedown);
 }
+
+
+// Отослать события нажатия мыши
+// key = 1 | 2 | 4
+// dir = 1 (down) 0 (up)
+
+void push_event_click(int key, int dir) {
+
+    int i, hwnd = 0, hit = 0, hit_title = 0, active_last = 0;
+    int x = cursor.mouse_x;
+    int y = cursor.mouse_y;
+
+    struct window* w;
+
+    // Обнаружить, где именно нажата мышь
+    for (i = 1; i < WINDOW_MAX; i++) {
+
+        w = & allwin[i];
+
+        if (w->active) {
+            active_last = i;
+        }
+
+        // Проверять все
+        if (w->in_use) {
+
+            // Проверка попадания в окно
+            if (w->x1 <= x && x <= w->x2 && w->y1 <= y && y <= w->y2) {
+                hwnd = i;
+                hit = 1;
+            }
+        }
+    }
+
+    // Отослать событие
+    if (hit) {
+
+        w = & allwin[ hwnd ];
+
+        if (key == PS2_BUTTON_LEFT) {
+
+            // Активация нового окна при левом кнопке мыши
+            if (w->active == 0) {
+
+                window_activate(hwnd);
+
+                // Перерисовка предыдущего активного окна
+                if (active_last != hwnd) {
+                    if (allwin[ active_last ].active == 0) {
+                        window_repaint(active_last);
+                    }
+                }
+
+                window_repaint(hwnd);
+                panel_repaint();
+            }
+
+            // Нажат заголовок окна (LKM) -- если оно есть
+            if (y >= w->y1 && y <= w->y1 + 22 && w->state == WINDOW_STATE_DEFAULT) {
+                hit_title = 1;
+            }
+        }
+
+        // Вызвать callback, если есть
+        if (dir) {
+            if (w->event_mousedown)
+                w->event_mousedown();
+        }
+        else {
+            if (w->event_mouseup)
+                w->event_mouseup();
+        }
+
+        // Захват и перерисовка moverbox
+        if (hit_title && dir) {
+
+            mover_active = hwnd;
+
+            mover_init_x1 = w->x1;
+            mover_init_y1 = w->y1;
+
+            draw_mover();
+        }
+    }
+
+    // Если мышь отпущена, то при активированном "перетаскивателе", восстановить фон
+    if (key == PS2_BUTTON_LEFT && dir == 0 && mover_active) {
+
+        restore_mover();
+
+        // Перерисовать старую область
+        desktop_repaint_bg(mover_init_x1, mover_init_y1, mover_width, mover_height);
+
+        // перерисовать окно
+        window_repaint(mover_active);
+
+        mover_active = 0;
+    }
+}

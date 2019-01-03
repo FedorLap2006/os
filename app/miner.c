@@ -45,18 +45,50 @@ void miner_semiseg(int x, int y, int id, int color) {
 // Рисование одной цифры
 void miner_digit(int x, int y, int digit) {
     
-    int color = 12;
-    int clr[7] = {0, 0, 0, 0, 0, 0, 0};
+    int color_bg = 4;
+    int color_fr = 12;
+    int i, j;
+    int mask = 0x20;    
     
-    miner_semiseg(x, y,             0, color);
-    miner_semiseg(x + 11, y,        1, color);
-    miner_semiseg(x + 11, y + 10,   1, color);
-    miner_semiseg(x, y,             2, color);
-    miner_semiseg(x, y + 10,        2, color);
-    miner_semiseg(x, y + 20,        3, color);
-    miner_semiseg(x, y + 9,         4, color);
+    // 7 сегментов
+    miner_semiseg(x,      y,        0, color_bg);
+    miner_semiseg(x + 11, y,        1, color_bg);
+    miner_semiseg(x + 11, y + 10,   1, color_bg);
+    miner_semiseg(x,      y,        2, color_bg);
+    miner_semiseg(x,      y + 10,   2, color_bg);
+    miner_semiseg(x,      y + 20,   3, color_bg);
+    miner_semiseg(x,      y + 9,    4, color_bg);
+    
+    // Затемнение
+    for (i = 0; i <= 20; i++) 
+    for (j = i % 2; j <= 11; j+=2)
+        gdi_pset(miner, x + j, y + i, 0);
+        
+    switch (digit) {
+        
+        case 0: mask = 0b0111111; break;
+        case 1: mask = 0b0000110; break; 
+        case 2: mask = 0b1011011; break;
+        case 3: mask = 0b1001111; break;
+        case 4: mask = 0b0000000; break;
+        case 5: mask = 0b1101101; break;
+        case 6: mask = 0b1111101; break;
+        case 7: mask = 0b0000111; break;
+        case 8: mask = 0b1111111; break;
+        case 9: mask = 0b1101111; break;
+    }
+
+    // Рисование засвеченных семисегментов
+    if (mask & 0x01) miner_semiseg(x,      y,        0, color_fr);
+    if (mask & 0x02) miner_semiseg(x + 11, y,        1, color_fr);
+    if (mask & 0x04) miner_semiseg(x + 11, y + 10,   1, color_fr);
+    if (mask & 0x08) miner_semiseg(x,      y + 20,   3, color_fr);
+    if (mask & 0x10) miner_semiseg(x,      y + 10,   2, color_fr);
+    if (mask & 0x20) miner_semiseg(x,      y,        2, color_fr);
+    if (mask & 0x40) miner_semiseg(x,      y + 9,    4, color_fr);
 }
 
+// Перерисовать целое окно
 void miner_repaint() {
 
     int i, j;
@@ -70,10 +102,10 @@ void miner_repaint() {
     gdi_ridge_rect(miner, 10, 50, 147, 147, 8, 15, 2);
     
     // Окно очков и окно времени
-    gdi_ridge_rect(miner, 16,    16, 40,        24,     8, 15, 1);
-    gdi_ridge_rect(miner, 16+95, 16, 40,        24,     8, 15, 1);
-    gdi_fillrect  (miner, 17,    17, 17+38,     23+16,  0);
-    gdi_fillrect  (miner, 17+95, 17, 17+95+38,  23+16,  0);
+    gdi_ridge_rect(miner, 16,    16, 44,        24,     8, 15, 1);
+    gdi_ridge_rect(miner, 16+90, 16, 44,        24,     8, 15, 1);
+    gdi_fillrect  (miner, 17,    17, 17+42,     23+16,  0);
+    gdi_fillrect  (miner, 17+90, 17, 17+90+42,  23+16,  0);
     
     // Рисование области поля
     for (i = 0; i < 9; i++)
@@ -81,7 +113,17 @@ void miner_repaint() {
         gdi_ridge_rect(miner, 12 + j*16, 52 + i*16, 15, 15, 15, 8, 2);    
     }
     
-    miner_digit(18,18,0);
+    // Вывести цифры
+    miner_digit(18,  18, 0); miner_digit(18+14,  18, 0); miner_digit(18+28,  18, 0);        
+    miner_digit(108, 18, 0); miner_digit(108+14, 18, 0); miner_digit(108+28, 18, 0);
+    
+    gdi_ridge_rect(miner, 70, 16, 24, 24, 15, 8, 2);
+}
+
+void miner_mouseclick() {
+    
+    gdi_pset(miner, 8, 8, 0);
+    
 }
 
 // Игрулька
@@ -90,7 +132,8 @@ void make_miner() {
     miner = window_create(64, 64, 164, 208, "Сапер");
 
     // Регистрация событий
-    window_event(miner, EVENT_REPAINT, & miner_repaint);
+    window_event(miner, EVENT_REPAINT,   & miner_repaint);
+    window_event(miner, EVENT_MOUSEDOWN, & miner_mouseclick);
     
     // Активация нового окна и перерисовка
     window_activate(miner); 
