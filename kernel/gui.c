@@ -160,11 +160,13 @@ void window_repaint(int id) {
     // Печать самого заголовка
     color(11, -1); print_at(win->x1+6,    win->y1+5, "\x04");
     color(15, -1); print_at(win->x1+6+12, win->y1+5, win->title);
+    
+    color(0, -1); 
 
     // Кнопка "закрыть"
     if (win->no_close == 0) {
         button(win->x2 - 19, win->y1 + 5, 15, 14, 0);
-        color(0, -1); print_at(win->x2 - 15, win->y1 + 3, "x");
+        print_at(win->x2 - 15, win->y1 + 3, "x");
     }
 
     // Отправка repaint

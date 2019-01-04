@@ -22,6 +22,17 @@ void cls(unsigned char color) {
     win_start = 0;
 }
 
+// Закрыть окно "старт"
+void desktop_close_start() {
+    
+    desktop_button_start = 0;
+
+    if (win_start) {
+        window_close(win_start);
+        win_start = 0;
+    }
+}
+
 // На рабочий стол было нажатие
 void desktop_mousedown() {
 
@@ -32,27 +43,27 @@ void desktop_mousedown() {
     if (x >= 3 && x <= 75 && y >= 458 && y <= 477) {
 
         if (desktop_button_start) {
-
-            desktop_button_start = 0;
-
-            if (win_start) {
-                window_close(win_start);
-                win_start = 0;
-            }
+            desktop_close_start();
 
         } else {
 
             desktop_button_start = 1;
 
-            win_start = window_create(3, 300, 200, 130, "Выбор программ");
+            win_start = window_create(0, 302, 200, 130, "Выбор программ");
 
             allwin[ win_start ].panel    = 0;
-            allwin[ win_start ].no_close = 1;
+            allwin[ win_start ].no_close = 1; // Нет кнопки закрыть
+            allwin[ win_start ].no_mover = 1; // Не перемещаемое
 
             window_repaint(win_start);
         }
 
         panel_button_start();
+    }
+    // Нажато куда-то на рабочий стол, закрыть окно
+    else if (desktop_button_start) {
+        
+        desktop_close_start();
     }
 }
 
@@ -278,11 +289,11 @@ void push_event_click(int key, int dir) {
                 }
 
                 window_repaint(hwnd);   // Перерисовать окно
-                panel_task_repaint();   // И панель задач
+                panel_repaint();        // И панель задач
             }
 
             // Нажат заголовок окна (LKM) -- если оно есть
-            if (y >= w->y1 && y <= w->y1 + 22 && w->state == WINDOW_STATE_DEFAULT) {
+            if (y >= w->y1 && y <= w->y1 + 22 && w->state == WINDOW_STATE_DEFAULT && w->no_mover == 0) {
                 hit_title = 1;
             }
         }
@@ -319,9 +330,11 @@ void push_event_click(int key, int dir) {
         if (mover_touch) {
 
             desktop_repaint_bg(mover_active, mover_init_x1, mover_init_y1, mover_width, mover_height);
+
             window_repaint(mover_active);
+            panel_repaint();
         }
 
-        mover_active = 0;
+        mover_active = 0;    
     }
 }
