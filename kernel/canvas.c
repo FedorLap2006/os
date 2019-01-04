@@ -29,7 +29,7 @@ unsigned char get_point(int x, int y) {
     if (x < 0 || y < 0 || x > 639 || y > 479)
         return 0;
         
-    return canvas[y*640 + x];
+    return vg.canvas[y*640 + x];
 }
 
 // Проверка на наличие МЫШИ в данной точке
@@ -68,10 +68,10 @@ void pset(int x, int y, unsigned char color) {
         int mc = point(x, y);
 
         // Если тут есть мышь, то ее нарисовать вместо точки
-        vga_pixel(x, y, mc ? mc : color);
+        vg.pset(x, y, mc ? mc : color);
 
         // А саму точку отправить в BB
-        canvas[640*y + x] = color;
+        vg.canvas[640*y + x] = color;
     }
 }
 
@@ -95,10 +95,10 @@ void block_draw(int x1, int y1, int x2, int y2, unsigned char color) {
     // Буфер
     for (i = y1; i <= y2; i++)
     for (j = x1; j <= x2; j++)
-        canvas[640*i + j] = color;
+        vg.canvas[640*i + j] = color;
 
-    // На экране
-    vga_block(x1, y1, x2, y2, color);
+    // На экране    
+    vg.block(x1, y1, x2, y2, color);
 }
 
 // Нарисовать блок :: очищается I=0, чтобы не вызвать прерывание мыши
@@ -110,7 +110,7 @@ void block(int x1, int y1, int x2, int y2, unsigned char color) {
         myh = my + 21;
 
     // Выходит за пределы рисования блока с мышью [0..+20]
-    if (y1 <= y2 && ((y2 < my) || (y1 > my + 20))) {
+    if (y1 <= y2 && ((y2 < my) || (y1 > my + 20))) {            
         block_draw(x1, y1, x2, y2, color);
 
     }
@@ -161,7 +161,7 @@ void print_char(unsigned char chr) {
     for (i = 0; i < 16; i++) {
         for (j = 0; j < 8; j++) {
 
-            if (disp_vga_8x16_font[ f + i ] & (1 << (7 - j))) {
+            if (vga8x16Font[ f + i ] & (1 << (7 - j))) {
                 pset(x + j, y + i, cursor.frcolor);
 
             } else if (cursor.bgcolor != -1) {
@@ -280,7 +280,7 @@ void update_region(int x1, int y1, int x2, int y2) {
     for (j = x1; j <= x2; j++) {
 
         color = point(j, i);
-        vga_pixel(j, i, color ? color : canvas[640*i + j]);
+        vg.pset(j, i, color ? color : vg.canvas[640*i + j]);
     }
 }
 

@@ -9,8 +9,11 @@
 
 #include "app/desktop.h"
 
-// Графика
-#include "kernel/vga.c"
+// Видеоадаптер
+#include "kernel/vga/driver.h"
+#include "kernel/vga/driver.c"
+
+// Отрисовка
 #include "kernel/canvas.c"
 #include "kernel/gui.c"
 
@@ -28,8 +31,8 @@
 #include "kernel/core.c"
 
 // GDI, USER, etc
-#include "gdi/gdi.h"
-#include "gdi/gdi.c"
+#include "api/gdi.h"
+#include "api/gdi.c"
 
 // Некоторые "приложения"
 #include "app/desktop.c"
