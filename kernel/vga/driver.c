@@ -82,5 +82,6 @@ void init_vg() {
     // Установить ссылку на функции
     vg.pset  = & vg_pixel;
     vg.block = & vg_block;
+    vg.w = 640;
+    vg.h = 480;
 }
-

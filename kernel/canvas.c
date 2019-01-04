@@ -29,7 +29,7 @@ unsigned char get_point(int x, int y) {
     if (x < 0 || y < 0 || x > 639 || y > 479)
         return 0;
         
-    return vg.canvas[y*640 + x];
+    return vg.canvas[vg.w*y + x];
 }
 
 // Проверка на наличие МЫШИ в данной точке
@@ -71,7 +71,7 @@ void pset(int x, int y, unsigned char color) {
         vg.pset(x, y, mc ? mc : color);
 
         // А саму точку отправить в BB
-        vg.canvas[640*y + x] = color;
+        vg.canvas[vg.w*y + x] = color;
     }
 }
 
@@ -95,7 +95,7 @@ void block_draw(int x1, int y1, int x2, int y2, unsigned char color) {
     // Буфер
     for (i = y1; i <= y2; i++)
     for (j = x1; j <= x2; j++)
-        vg.canvas[640*i + j] = color;
+        vg.canvas[vg.w*i + j] = color;
 
     // На экране    
     vg.block(x1, y1, x2, y2, color);
@@ -280,7 +280,7 @@ void update_region(int x1, int y1, int x2, int y2) {
     for (j = x1; j <= x2; j++) {
 
         color = point(j, i);
-        vg.pset(j, i, color ? color : vg.canvas[640*i + j]);
+        vg.pset(j, i, color ? color : vg.canvas[vg.w*i + j]);
     }
 }
 

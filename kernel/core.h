@@ -3,6 +3,8 @@ int create_gdt(uint32_t, uint32_t, uint8_t);
 // Драйвер видеокарты
 struct DriverVG {
     
+    int w, h; // Размер по ширине и высоте
+    
     // Видеохолст (задний буфер)
     uint32_t* canvas; 
 
