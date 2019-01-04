@@ -1,5 +1,5 @@
 // Нарисовать пиксель на экране
-void vg_pixel(int x, int y, int c) {
+void vg_pixel(int x, int y, uint c) {
 
     char* vaddr = (char*)0xA0000;
 
@@ -16,7 +16,7 @@ void vg_pixel(int x, int y, int c) {
 }
 
 // Нарисовать блок
-void vg_block(int x1, int y1, int x2, int y2, int color) {
+void vg_block(int x1, int y1, int x2, int y2, uint color) {
 
     int i, j, x;
 
@@ -64,9 +64,12 @@ void vg_block(int x1, int y1, int x2, int y2, int color) {
 void init_vg() {
 
     int i;
+    
+    vg.w = 640;
+    vg.h = 480;
 
     // Выделить необходимое количество памяти
-    vg.canvas = kalloc(4*640*480);
+    vg.canvas = (uint16_t*)kalloc(2*640*480);
 
     // Режим 2 (регистр выбор режима 5) режим записи 1 слой цвета - 1 бит
     for (i = 0; i < 16; i++) {
@@ -82,6 +85,4 @@ void init_vg() {
     // Установить ссылку на функции
     vg.pset  = & vg_pixel;
     vg.block = & vg_block;
-    vg.w = 640;
-    vg.h = 480;
 }

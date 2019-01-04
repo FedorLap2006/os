@@ -45,9 +45,11 @@ void desktop_mousedown() {
             desktop_button_start = 1;
 
             win_start = window_create(3, 300, 200, 130, "Выбор программ");
-            window_repaint(win_start);
 
-            allwin[ win_start ].panel = 0;
+            allwin[ win_start ].panel    = 0;
+            allwin[ win_start ].no_close = 1;
+
+            window_repaint(win_start);
         }
 
         panel_button_start();
@@ -121,11 +123,34 @@ void panel_repaint() {
 }
 
 // Перерисовать область заднего фона
-void desktop_repaint_bg(int x1, int y1, int w, int h) {
+void desktop_repaint_bg(int hwnd, int x1, int y1, int w, int h) {
 
-    block(x1, y1, x1 + w, y1 + h, 3);
+    int i;
+    
+    int x2 = x1 + w,
+        y2 = y1 + h;
+
+    block(x1, y1, x2, y2, 3);
 
     // Проверить захваченные края окон
+    for (i = 1; i < WINDOW_MAX; i++) {
+        
+        struct window* win = & allwin[i];
+        
+        // Пропуск своего окна
+        if (i == hwnd)
+            continue;
+
+        // Окно открыто, проверить его границы
+        if (win->in_use && win->state == WINDOW_STATE_DEFAULT) {
+            
+            // Один из краев области пересекся с x1 или x2 
+            if ( ((x1 < win->x1 && win->x1 < x2) || (x1 < win->x2 && win->x2 < x2) || (x1 > win->x1 && x2 < win->x2)) &&
+                 ((y1 < win->y1 && win->y1 < y2) || (y1 < win->y2 && win->y2 < y2) || (y1 > win->y1 && y2 < win->y2)) ) {
+                window_repaint(i);            
+            }                  
+        }
+    }
 
     // Если область захватила панель
     if (y1 + h >= 450 || y1 >= 450) {
@@ -293,7 +318,7 @@ void push_event_click(int key, int dir) {
         // Перерисовать старую область
         if (mover_touch) {
 
-            desktop_repaint_bg(mover_init_x1, mover_init_y1, mover_width, mover_height);
+            desktop_repaint_bg(mover_active, mover_init_x1, mover_init_y1, mover_width, mover_height);
             window_repaint(mover_active);
         }
 

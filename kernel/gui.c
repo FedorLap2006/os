@@ -96,7 +96,7 @@ void window_close(int hwnd) {
     bzero(win, sizeof(struct window));
     
     // Очистить экран за окном
-    desktop_repaint_bg(x1, y1, w, h);
+    desktop_repaint_bg(hwnd, x1, y1, w, h);
 }
 
 // Нарисовать кнопку
@@ -161,8 +161,11 @@ void window_repaint(int id) {
     color(11, -1); print_at(win->x1+6,    win->y1+5, "\x04");
     color(15, -1); print_at(win->x1+6+12, win->y1+5, win->title);
 
-    button(win->x2 - 19, win->y1 + 5, 15, 14, 0);
-    color(0, -1); print_at(win->x2 - 15, win->y1 + 3, "x");
+    // Кнопка "закрыть"
+    if (win->no_close == 0) {
+        button(win->x2 - 19, win->y1 + 5, 15, 14, 0);
+        color(0, -1); print_at(win->x2 - 15, win->y1 + 3, "x");
+    }
 
     // Отправка repaint
     if (win->event_repaint)

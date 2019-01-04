@@ -23,7 +23,12 @@ struct Tcursor {
     int     mouse_x;
     int     mouse_y;
     int     mouse_show;
+};
+
+struct BoundBox {
     
+    int x1, y1;
+    int x2, y2;    
 };
 
 struct Tcursor cursor;

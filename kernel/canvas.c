@@ -61,9 +61,9 @@ unsigned char point(int x, int y) {
 
 // ---------------------------------------------------------------------
 // Нарисовать точку как на экране, так и в backbuffer
-void pset(int x, int y, unsigned char color) {
+void pset(int x, int y, uint color) {
 
-    if (x >= 0 && y >= 0 && x < 640 && y < 480) {
+    if (x >= 0 && y >= 0 && x < vg.w && y < vg.h) {
 
         int mc = point(x, y);
 
@@ -76,33 +76,38 @@ void pset(int x, int y, unsigned char color) {
 }
 
 // Реально нарисовать блок
-void block_draw(int x1, int y1, int x2, int y2, unsigned char color) {
+void block_draw(int x1, int y1, int x2, int y2, uint color) {
 
-    int i, j;
-
-    // Превышение нижних границ
-    if ((x1 < 0 && x2 < 0) || (y1 < 0 && y2 < 0))
+    uint i, j;
+    
+    // Неправильно заданы стороны
+    if (x1 > x2 || y1 > y2)
         return;
 
     // Превышение верхних границ
-    if (x1 > 639 || y1 > 479 || x1 > x2 || y1 > y2)
+    if (x1 >= vg.w || y1 >= vg.h)
+        return;
+
+    // Превышение нижних границ
+    if (x2 < 0 || y2 < 0)
         return;
 
     // Корректировка границ
-    if (x1 < 0) x1 = 0; if (x2 > 639) x2 = 639;
-    if (y1 < 0) y1 = 0; if (y2 > 479) y2 = 479;
+    if (x1 < 0) x1 = 0; if (x2 >= vg.w) x2 = vg.w - 1;
+    if (y1 < 0) y1 = 0; if (y2 >= vg.h) y2 = vg.h - 1;
 
-    // Буфер
-    for (i = y1; i <= y2; i++)
-    for (j = x1; j <= x2; j++)
+    // Запись данных в буфер
+    for (i = y1; i <= y2; i++) 
+    for (j = x1; j <= x2; j++) {
         vg.canvas[vg.w*i + j] = color;
+    }
 
     // На экране    
     vg.block(x1, y1, x2, y2, color);
 }
 
 // Нарисовать блок :: очищается I=0, чтобы не вызвать прерывание мыши
-void block(int x1, int y1, int x2, int y2, unsigned char color) {
+void block(int x1, int y1, int x2, int y2, uint color) {
 
     int i, j;
     int mx  = cursor.mouse_x,

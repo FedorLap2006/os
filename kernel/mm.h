@@ -22,7 +22,7 @@
 #define PTE_USER2       0x400
 #define PTE_USER3       0x800
 
-#define SYSMEM          8       // Минимальное количество памяти для ядра (мб)
+#define SYSMEM          16      // Минимальное количество памяти для ядра (мб)
 
 uint32_t*   PDBR;           // Page Directory Base Root
 uint32_t*   CPage;          // Особая страница для создания других страниц
@@ -33,3 +33,4 @@ uint32_t    mem_real_max;   // Реальное кол-в памяти
 uint32_t    mem_lower;      // Нижняя граница свободного пространства
 
 void* kalloc(size_t);
+void* palloc(size_t);

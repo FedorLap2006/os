@@ -6,13 +6,13 @@ struct DriverVG {
     int w, h; // Размер по ширине и высоте
     
     // Видеохолст (задний буфер)
-    uint32_t* canvas; 
+    uint16_t* canvas; 
 
     // Установка точки (x, y, color)    
-    void (*pset)(int, int, int);   
+    void (*pset)(int, int, uint);   
     
     // LINE (x1,y1)-(x2,y2),color,bf
-    void (*block)(int, int, int, int, int); 
+    void (*block)(int, int, int, int, uint); 
 };
 
 // Обработчик графикии
