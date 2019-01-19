@@ -24,7 +24,7 @@ void cls(unsigned char color) {
 
 // Закрыть окно "старт"
 void desktop_close_start() {
-    
+
     desktop_button_start = 0;
 
     if (win_start) {
@@ -62,7 +62,7 @@ void desktop_mousedown() {
     }
     // Нажато куда-то на рабочий стол, закрыть окно
     else if (desktop_button_start) {
-        
+
         desktop_close_start();
     }
 }
@@ -81,9 +81,9 @@ void panel_button_start() {
 
 // Перерисовать панель задач
 void panel_task_repaint() {
-    
+
     int id, num = 0;
-        
+
     // Параметры вывода
     color(0, -1);
     cursor.max_chars = 13;
@@ -137,7 +137,7 @@ void panel_repaint() {
 void desktop_repaint_bg(int hwnd, int x1, int y1, int w, int h) {
 
     int i;
-    
+
     int x2 = x1 + w,
         y2 = y1 + h;
 
@@ -145,21 +145,21 @@ void desktop_repaint_bg(int hwnd, int x1, int y1, int w, int h) {
 
     // Проверить захваченные края окон
     for (i = 1; i < WINDOW_MAX; i++) {
-        
+
         struct window* win = & allwin[i];
-        
+
         // Пропуск своего окна
         if (i == hwnd)
             continue;
 
         // Окно открыто, проверить его границы
         if (win->in_use && win->state == WINDOW_STATE_DEFAULT) {
-            
-            // Один из краев области пересекся с x1 или x2 
+
+            // Один из краев области пересекся с x1 или x2
             if ( ((x1 < win->x1 && win->x1 < x2) || (x1 < win->x2 && win->x2 < x2) || (x1 > win->x1 && x2 < win->x2)) &&
                  ((y1 < win->y1 && win->y1 < y2) || (y1 < win->y2 && win->y2 < y2) || (y1 > win->y1 && y2 < win->y2)) ) {
-                window_repaint(i);            
-            }                  
+                window_repaint(i);
+            }
         }
     }
 
@@ -335,6 +335,6 @@ void push_event_click(int key, int dir) {
             panel_repaint();
         }
 
-        mover_active = 0;    
+        mover_active = 0;
     }
 }
