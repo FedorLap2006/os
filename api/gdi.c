@@ -48,3 +48,25 @@ void gdi_ridge_rect(int hwnd, int x1, int y1, int w, int h, int color1, int colo
         gdi_fillrect(hwnd, x1+i, y2-i, x2-i, y2-i, color2);
     }
 }
+
+// Закрашенная окружность
+void gdi_circle(int hwnd, int x, int y, int radius, uint color) {
+    
+    struct window* win = & allwin[ hwnd ];
+    
+    x = win->x1 + x + 2; 
+    y = win->y1 + y + 22;
+    
+    circle(x, y, radius, color);
+}
+
+// Закрашенная окружность
+void gdi_circle_fill(int hwnd, int x, int y, int radius, uint color) {
+    
+    struct window* win = & allwin[ hwnd ];
+    
+    x = win->x1 + x + 2; 
+    y = win->y1 + y + 22;
+    
+    circle_fill(x, y, radius, color);
+}
