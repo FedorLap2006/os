@@ -47,8 +47,13 @@ int kb_read() {
     return IoRead8(0x60);
 }
 
+// Обработчик МЫШ`и
+void ps2_mouse_handler() {
+    brk;
+}
+
 // Инициализацировать мышь
-void ps_init_mouse() {
+void ps2_init_mouse() {
 
     uint a;
 
@@ -67,4 +72,7 @@ void ps_init_mouse() {
     ps2_pressed         = 0;
     ps2_time_at         = 0;
     ps2_mouse_state     = 0;
+
+    // Определение обработчика
+    pic.ps2mouse = & ps2_mouse_handler;
 }

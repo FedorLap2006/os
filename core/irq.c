@@ -6,8 +6,6 @@
 /** Процедура, которая переводит IRQ с их стандартных позиции из R-Mode в P-Mode */
 void irq_redirect(uint bitmask) {
 
-    apic_disable();
-
     // Запуск последовательности инициализации (в режиме каскада)
     IoWrite8(PIC1_COMMAND, ICW1_INIT + ICW1_ICW4); IoWait;
     IoWrite8(PIC2_COMMAND, ICW1_INIT + ICW1_ICW4); IoWait;
@@ -97,9 +95,7 @@ void pic_timer() {
 }
 
 /** Обработчик прерывания от клавиатуры */
-void pic_keyboard() {
-}
+void pic_keyboard() { pic.keyboard(); }
 
 /** Обработчик прерывания от мыши */
-void pic_ps2mouse() {
-}
+void pic_ps2mouse() { pic.ps2mouse(); }

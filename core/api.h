@@ -16,11 +16,9 @@ struct DriverVG {
 
 // Программируемые прерывания
 struct DriverPIC {
-    
-    void (*keyboard)();
-    void (*ps2mouse)();
-    void (*timer)();
 
+    void (*keyboard)();             // Обработчик клавиатуры
+    void (*ps2mouse)();             // Обработчик мыши
 };
 
 // Обработчик графикии
