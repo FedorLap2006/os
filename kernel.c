@@ -47,7 +47,7 @@ void main() {
 
     make_desktop();
     make_miner();
-    
+
     // http://www.sig9.com/articles/att-syntax
     // ljmp	*(%eax)			jmp  far  [eax]
 

@@ -439,7 +439,7 @@ int fs_get_cluster(file_id) {
 }
 
 // Открыть новый дескриптор файла
-// struct File fp = fopen("c:/wall/main.bmp");    
+// struct File fp = fopen("c:/wall/main.bmp");
 struct File fopen(const char* name) {
 
     struct File fp;
@@ -498,9 +498,9 @@ struct File fopen(const char* name) {
 
     // Найти файл и переписать его атрибуты
     if ((file_id = fs_find(fn + cs))) {
-        
+
         file_id--;
-        
+
         fp.cluster_first    = fs_get_cluster(file_id);
         fp.cluster_current  = fp.cluster_first;
         fp.file     = fs.items[ file_id ];
