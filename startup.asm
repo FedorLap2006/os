@@ -1,9 +1,11 @@
 [BITS 32]
 
+; ----------------------------------------------------------------------
 [EXTERN main]
 [EXTERN pic_timer]          ; IRQ 0
 [EXTERN pic_keyboard]       ; IRQ 1
 [EXTERN pic_ps2mouse]       ; IRQ C
+; ----------------------------------------------------------------------
 
 [GLOBAL _start]
 
