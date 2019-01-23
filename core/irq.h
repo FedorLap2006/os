@@ -1,37 +1,18 @@
-// Адреса PIC 8086/88
-// ---------------------------------------------------------------------
 
-#define PIC1             0x20  /* IO базовый адрес для master PIC */
-#define PIC2             0xA0  /* IO базовый адрес для slave PIC */
+/** Обращения к startup.asm */
+void INT_null();
+void IRQ_timer();
+void IRQ_keyboard();
+void IRQ_ps2mouse();
+void IRQ_cascade();
+void IRQ_master();
+void IRQ_slave();
+void delay();
 
-#define PIC1_COMMAND     PIC1
-#define PIC1_DATA        (PIC1+1)
+/** Прототипы */
+void irq_redirect(uint);
+void irq_make(dword, void*, byte);
+void irq_init(uint);
 
-#define PIC2_COMMAND     PIC2
-#define PIC2_DATA        (PIC2+1)
-
-#define PIC_EOI          0x20  /* End-of-interrupt command code */
-
-#define ICW1_ICW4        0x01  /* ICW4 (not) needed */
-#define ICW1_SINGLE      0x02  /* Single (cascade) mode */
-#define ICW1_INTERVAL4   0x04  /* Call address interval 4 (8) */
-#define ICW1_LEVEL       0x08  /* Level triggered (edge) mode */
-#define ICW1_INIT        0x10  /* Initialization - required! */
-
-#define ICW4_8086        0x01  /* 8086/88 (MCS-80/85) mode */
-#define ICW4_AUTO        0x02  /* Auto (normal) EOI */
-#define ICW4_BUF_SLAVE   0x08  /* Buffered mode/slave */
-#define ICW4_BUF_MASTER  0x0C  /* Buffered mode/master */
-#define ICW4_SFNM        0x10  /* Special fully nested (not) */
-
-// Устройства
-#define KB_WAIT          65536
-
-// Маски
-#define IRQ_TIMER        (1 << 0)
-#define IRQ_KEYB         (1 << 1)
-#define IRQ_CASCADE      (1 << 2)
-#define IRQ_PS2MOUSE     (1 << 12)
-
-// Процедура необходимой задержки для корректной работы прерываний
-#define IoWait asm volatile("jecxz 1f" "\n\t" "1:jecxz 2f" "\n\t" "2:");
+/** Переменные */
+dword timer;

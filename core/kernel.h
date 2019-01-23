@@ -13,24 +13,13 @@
 #define byte     unsigned char          //  8 bit
 #define word     unsigned short         // 16 bit
 #define uint     unsigned int           // 32 bit
+#define dword    unsigned int           // 32 bit
 #define ulong    unsigned long long     // 64 bit
+#define qword    unsigned long long     // 64 bit
 
 // Описание полей дескриптора
 #define D_PRESENT     0x80
 #define T_TSS_AVAIL   0x09
-
-// Функции в startup.asm
-// ---------------------------------------------------------------------
-
-void apic_disable();            // Отключить LAPIC
-void INT_null();                // Заглушка INT
-void IRQ_timer();
-void IRQ_keyboard();
-void IRQ_ps2mouse();
-void IRQ_cascade();
-void IRQ_master();
-void IRQ_slave();
-void delay();
 
 // Структуры
 // ---------------------------------------------------------------------
@@ -38,8 +27,8 @@ void delay();
 // Указатель на GDT
 struct __attribute__((__packed__)) GDT_ptr {
 
-    word limit;
-    uint base;
+    word  limit;
+    dword base;
 };
 
 // Элемент GDT http://neurofox.net/sasm/14_descriptor

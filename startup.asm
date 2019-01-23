@@ -9,7 +9,6 @@
 
 [GLOBAL _start]
 
-[GLOBAL apic_disable]
 [GLOBAL INT_null]
 [GLOBAL IRQ_timer]
 [GLOBAL IRQ_keyboard]
@@ -23,18 +22,8 @@
 _start: 
 
         ; Выделяется 512 кб под стек
-        mov     esp, 0x180000       
+        mov     esp, 0x180000
         jmp     main
-
-; Отключение локального APIC
-; ----------------------------------------------------------------------
-apic_disable:
-
-        mov     ecx, 0x1b
-        rdmsr
-        and     eax, 0xfffff7ff
-        wrmsr
-        ret
 
 ; ----------------------------------------------------------------------
 delay:  push    ecx
@@ -42,14 +31,14 @@ delay:  push    ecx
 dely:   loop    dely
         pop     ecx
         ret
-        
+
 ; ----------------------------------------------------------------------
 ; ПРЕРЫВАНИЯ
 
 INT_null:
 
         xchg    bx, bx
-        jmp     INT_null        ; !!! ERRROR !!!
+        jmp     INT_null
         iretd
 
 IRQ_master:
