@@ -6,6 +6,12 @@ struct DriverVG {
 
     // Видеохолст (задний буфер)
     word* canvas;
+    
+    // Текстовый или графический режим
+    byte (*mode)();
+    
+    // Печать символа `chr` в (x,y) цвет F, фон B
+    void (*print)(int, int, byte, int, int);
 
     // Установка точки (x, y, color)
     void (*pset)(int, int, uint);

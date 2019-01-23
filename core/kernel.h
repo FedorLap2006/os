@@ -21,6 +21,9 @@
 #define D_PRESENT     0x80
 #define T_TSS_AVAIL   0x09
 
+// Резерв для системной памяти
+#define SYSTEM_MEMORY_MB        8
+
 // Структуры
 // ---------------------------------------------------------------------
 
@@ -51,5 +54,17 @@ struct __attribute__((__packed__)) IDT_Item {
     word hi_addr;
 };
 
+// Прототипы
+// ---------------------------------------------------------------------
+void  detect_max_memory_size();
+void* kalloc(uint);
+void  kernel_init();
+
+// Переменные
+// ---------------------------------------------------------------------
+
 // Расположение Global Descriptor Table
 struct GDT_item* GDT;
+
+uint mm_real_max;   // Объем физической памяти
+uint mm_syst_max;   // Указатель для kalloc()

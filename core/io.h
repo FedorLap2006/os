@@ -114,3 +114,6 @@ static inline void apic_disable() {
     asm volatile("andl  $0xfffff7ff, %%eax" ::: "eax");
     asm volatile("wrmsr");
 }
+
+/* Получение байта из памяти */
+volatile byte peek(uint address) { byte* t = (byte*)8; return t[ address - 8 ]; }
