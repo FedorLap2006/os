@@ -44,9 +44,9 @@ void ata_drive_select(int slavebit, struct ATA_DEVICE* ctrl) {
 
     // Ожидать 400ns, пока драйв включится в работу
     IoRead8(ctrl->dev_ctl);
-	IoRead8(ctrl->dev_ctl);
-	IoRead8(ctrl->dev_ctl);
-	IoRead8(ctrl->dev_ctl);
+    IoRead8(ctrl->dev_ctl);
+    IoRead8(ctrl->dev_ctl);
+    IoRead8(ctrl->dev_ctl);
 }
 
 /** id = [0..3], номер ATA */
@@ -139,9 +139,9 @@ void ata_prepare_lba(int device_id, uint lba, int count, int command) {
 
     // Ожидать 400ns, пока драйв включится в работу
     IoRead8(devctl);
-	IoRead8(devctl);
-	IoRead8(devctl);
-	IoRead8(devctl);
+    IoRead8(devctl);
+    IoRead8(devctl);
+    IoRead8(devctl);
 
     // Старшие разряды
     IoWrite8(base + ATA_REG_COUNT,   (count >>  8) & 0xFF);

@@ -27,7 +27,7 @@ void init_disk() {
 
     // Просмотр всех ATA-устройств
     for (device_id = 0; device_id < 4; device_id++) {
-brk;
+
         // Определить тип устройства
         ata_drive[ device_id ].base    = device_id < 2 ? 0x1F0 : 0x170;
         ata_drive[ device_id ].dev_ctl = device_id < 2 ? 0x3F6 : 0x376;
