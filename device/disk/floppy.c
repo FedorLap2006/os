@@ -38,6 +38,7 @@ void fdc_dma_write() {
     IoWrite8(0x0A, 0x02);       // unmask DMA channel 2
 }
 
+
 /** Запись данных */
 void fdc_write_reg(byte reg) {
 
@@ -62,20 +63,64 @@ void fdc_motor_off() {
     IoWrite8(DIGITAL_OUTPUT_REGISTER, 0);
 }
 
-/** Включить IRQ после SEEK */
+/** Ожидание получения данных */
+void fdc_wait(int bits) {
+
+    while (((IoRead8(MAIN_STATUS_REGISTER)) & bits) != bits);
+}
+
+/** Проверить IRQ-статус после SEEK */
 byte fdc_sensei() {
 
-    byte r;
+    // Отправка запроса
+    fdc_write_reg(SENSE_INTERRUPT);
+    fdc_wait(0xD0);
 
-    do {
-
-        fdc_write_reg(SENSE_INTERRUPT); // get interrupt status command
-        r = fdc_read_reg();             // получение результата
-
-    } while (r & 0x80);
+    // Получение результата
+    fdc.st0 = fdc_read_reg();
+    fdc_wait(0xD0);
 
     // Возвращается номер цилиндра
     return fdc_read_reg();
+}
+
+/** Конфигурирование */
+void fdc_configure() {
+
+    fdc_write_reg(SPECIFY);
+    fdc_write_reg(0);           // steprate_headunload
+    fdc_write_reg(0);           // headload_ndma
+}
+
+/** Рекалибрация */
+void fdc_calibrate() {
+
+    fdc_motor_on();
+
+    fdc_write_reg(RECALIBRATE);     // Команда
+    fdc_write_reg(0);               // Drive = A:
+
+    /* Ожидать и принять данные от рекалибрации */
+    fdc.status = FDC_STATUS_SENSEI;
+    fdc.irq_ready = 0; while (!fdc.irq_ready);
+}
+
+/** Сбросить контроллер перед работой с диском */
+void fdc_reset() {
+
+    // Отключить и включить контроллер
+    IoWrite8(DIGITAL_OUTPUT_REGISTER, 0x00);
+    IoWrite8(DIGITAL_OUTPUT_REGISTER, 0x0c);
+
+    // Подождать IRQ
+    fdc.status = FDC_STATUS_SENSEI;
+    fdc.irq_ready = 0; while (!fdc.irq_ready);
+
+    // Конфигурирование
+    IoWrite8(CONFIGURATION_CONTROL_REGISTER, 0);
+
+    fdc_configure();
+    fdc_calibrate();
 }
 
 /** Сбор результирующих данных: если > 0, то ошибка */
@@ -117,12 +162,12 @@ void fdc_rw(byte write, byte head, byte cyl, byte sector) {
 
 /** Чтение сектора в $1000 */
 void fdc_read(int lba) {
-    
+
 }
 
 /** Запись сектора из $1000 */
 void fdc_write(int lba) {
-    
+
 }
 
 /** Поиск дорожки => IRQ #6 */

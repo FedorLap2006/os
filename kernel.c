@@ -26,9 +26,10 @@ void main() {
 
     kernel_init();
 
-    // ---
-
     sti;
+
+    brk;
+//    fdc_reset();
 
     // чтение сектора
     // fdc_read(0);

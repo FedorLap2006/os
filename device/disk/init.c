@@ -25,13 +25,17 @@ void fdc_irq() {
     byte cyl;
 
     switch (fdc.status) {
+        
+        /** Проверка статуса RESET */
+        case FDC_STATUS_SENSEI:
+
+            fdc_sensei();
+            break;
 
         /** Поиск дорожки */
         case FDC_STATUS_SEEK:
 
-            // @todo проверить
             cyl = fdc_sensei();
-
             // @todo запуск чтения или записи данных
             break;
 
