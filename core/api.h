@@ -1,23 +1,21 @@
+
 // Видеоподсистема
 struct DriverVG {
 
-    // Размер по ширине и высоте
-    uint w, h;
+    uint w, h;              // Размер по ширине и высоте (графика)
+    uint cx, cy, fr, bg;    // Позиция курсора и цвет символов
 
-    // Видеохолст (задний буфер)
-    word* canvas;
-    
-    // Текстовый или графический режим
-    byte (*mode)();
-    
-    // Печать символа `chr` в (x,y) цвет F, фон B
-    void (*print)(int, int, byte, int, int);
+    word* canvas;           // Видеохолст (задний буфер)
+    byte mode;              // Текстовый или графический режим
 
-    // Установка точки (x, y, color)
-    void (*pset)(int, int, uint);
+    // Функции для работы с текстом
+    void (*cursor)(int, int);                   // Установить курсор
+    void (*print)(int, int, byte, int, int);    // Печать символа `chr` в (x,y) цвет F, фон B
+    void (*scroll)();                           // Скроллинг экрана на 1 вниз
 
-    // LINE (x1,y1)-(x2,y2),color,bf
-    void (*block)(int, int, int, int, uint);
+    // С графикой
+    void (*pset)(int, int, uint);               // Установка точки (x, y, color)
+    void (*block)(int, int, int, int, uint);    // LINE (x1,y1)-(x2,y2),color,bf
 };
 
 // Программируемые прерывания
