@@ -1,14 +1,15 @@
 #include "ata.c"
+#include "floppy.c"
 
 // Получение типа диска
 int disk_get_type(byte disk_id) {
 
     switch (disk_id) {
 
-        case 0: /* ata bus 0 master */
-        case 1: /* ata bus 0 slave */
-        case 2: /* ata bus 1 master */
-        case 3: /* ata bus 1 slave */
+        case 0: /* ata bus pri master */
+        case 1: /* ata bus pri slave */
+        case 2: /* ata bus sec master */
+        case 3: /* ata bus sec slave */
             return ata_drive[ disk_id ].type;
 
         case 4: /* fd 0 */ break;
