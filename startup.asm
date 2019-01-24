@@ -4,6 +4,7 @@
 [EXTERN main]
 [EXTERN pic_timer]          ; IRQ 0
 [EXTERN pic_keyboard]       ; IRQ 1
+[EXTERN pic_fdc]            ; IRQ 6
 [EXTERN pic_ps2mouse]       ; IRQ C
 ; ----------------------------------------------------------------------
 
@@ -16,6 +17,7 @@
 [GLOBAL IRQ_cascade]
 [GLOBAL IRQ_master]
 [GLOBAL IRQ_slave]
+[GLOBAL IRQ_fdc]
 [GLOBAL delay]
 
 ; ----------------------------------------------------------------------
@@ -81,6 +83,14 @@ IRQ_keyboard:
         popad
         iretd
 
+IRQ_fdc:
+
+        pushad
+        call    pic_fdc
+        mov     al, 20h
+        out     20h, al
+        popad
+        iretd
 
 ; Прерывание со slave
 ; ----------------------------------------------------------------------

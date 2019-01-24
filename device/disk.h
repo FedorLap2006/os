@@ -37,6 +37,13 @@ enum FloppyRegisters
    CONFIGURATION_CONTROL_REGISTER   = 0x3F7  // write-only
 };
 
+enum FloppyStatus 
+{
+    FDC_STATUS_NONE     = 0x0,
+    FDC_STATUS_SEEK     = 0x1,
+    FDC_STATUS_RW       = 0x2,
+};
+
 enum FloppyCommands
 {
    READ_TRACK =                 2,	// generates IRQ6
@@ -72,4 +79,25 @@ struct ATA_DEVICE {
     byte identify[512]; // Информация от устройства
 };
 
+// Информация о FDC
+struct FDC_DEVICE {
+    
+    byte    st0;
+    byte    st1;
+    byte    st2;
+    byte    cyl;
+    byte    head_end;
+    byte    head_start;
+    
+    /* status:
+     * 0 => выключен
+     * 1 => выполняется fdc_seek
+     * 2 => чтение или запись
+     */
+     
+    byte    status;
+    volatile byte irq_ready;
+};
+
 struct ATA_DEVICE ata_drive[4];  // 4 канала
+struct FDC_DEVICE fdc;

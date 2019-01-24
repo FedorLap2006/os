@@ -19,12 +19,51 @@ int disk_get_type(byte disk_id) {
     return DISK_DEV_UNKNOWN;
 }
 
+/** Обработчик прерывания от FDC */
+void fdc_irq() {
+
+    byte cyl;
+
+    switch (fdc.status) {
+
+        /** Поиск дорожки */
+        case FDC_STATUS_SEEK:
+
+            // @todo проверить
+            cyl = fdc_sensei();
+
+            // @todo запуск чтения или записи данных
+            break;
+
+        /** Чтение или запись */
+        case FDC_STATUS_RW:
+
+            if (fdc_get_result()) {
+                // произошла ошибка поиска
+            }
+
+            break;
+    }
+
+    fdc.irq_ready = 1;
+}
+
 void init_disk() {
 
     int device_id;
 
+    // Диск выключен
+    fdc.irq_ready   = 0;
+    fdc.status      = FDC_STATUS_NONE;
+
     // Назначить методы
+    pic.fdc = & fdc_irq;
+
+    // Получение типа диска
     disk.get_type = & disk_get_type;
+
+    // Подготовка DMA
+    fdc_dma_init();
 
     // Просмотр всех ATA-устройств
     for (device_id = 0; device_id < 4; device_id++) {

@@ -22,6 +22,7 @@ struct DriverVG {
 struct DriverPIC {
 
     void (*keyboard)();     // Обработчик клавиатуры
+    void (*fdc)();          // Floppy Disk Controller
     void (*ps2mouse)();     // Обработчик мыши
 };
 

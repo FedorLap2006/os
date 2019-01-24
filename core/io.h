@@ -63,6 +63,7 @@
 #define IRQ_TIMER        (1 << 0)
 #define IRQ_KEYB         (1 << 1)
 #define IRQ_CASCADE      (1 << 2)
+#define IRQ_FDC          (1 << 6)
 #define IRQ_PS2MOUSE     (1 << 12)
 
 // Процедура необходимой задержки для корректной работы прерываний

@@ -26,5 +26,22 @@ void main() {
 
     kernel_init();
 
-    sti; for(;;);
+    // ---
+
+    sti;
+
+    // чтение сектора
+    // fdc_read(0);
+
+    fdc_motor_on();
+    fdc_seek(0, 0);
+    while (fdc.irq_ready == 0);
+
+brk;
+    fdc_dma_read();
+    fdc_rw(0, 0, 0, 1);
+
+    while (fdc.irq_ready == 0);
+
+    for(;;);
 }

@@ -192,7 +192,7 @@ void kernel_init() {
     apic_disable();
 
     /* Переназначить новые прерывания */
-    irq_init(IRQ_TIMER | IRQ_KEYB | IRQ_CASCADE | IRQ_PS2MOUSE);
+    irq_init(IRQ_TIMER | IRQ_KEYB | IRQ_CASCADE | IRQ_PS2MOUSE | IRQ_FDC);
 
     /* Инициализировать клавиатуру и мышь */
     kbd_init();

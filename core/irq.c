@@ -73,7 +73,7 @@ void irq_init(uint bitmask) {
     irq_make(0x23, & IRQ_master,   0x8E); // 3
     irq_make(0x24, & IRQ_master,   0x8E); // 4
     irq_make(0x25, & IRQ_master,   0x8E); // 5
-    irq_make(0x26, & IRQ_master,   0x8E); // 6
+    irq_make(0x26, & IRQ_fdc,      0x8E); // 6
     irq_make(0x27, & IRQ_master,   0x8E); // 7
     irq_make(0x28, & IRQ_slave,    0x8E); // 8
     irq_make(0x29, & IRQ_slave,    0x8E); // 9
@@ -96,6 +96,9 @@ void pic_timer() {
 
 /** Обработчик прерывания от клавиатуры */
 void pic_keyboard() { pic.keyboard(); }
+
+/** Обработчик FDC */
+void pic_fdc() { pic.fdc(); }
 
 /** Обработчик прерывания от мыши */
 void pic_ps2mouse() { pic.ps2mouse(); }
