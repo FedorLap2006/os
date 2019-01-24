@@ -10,9 +10,12 @@
 #include "device/ps2.h"
 #include "device/kbd.h"
 #include "device/vg.h"
+#include "device/disk.h"
+
 #include "device/ps2/init.c"            // PS2 мышь
 #include "device/kbd/init.c"            // Клавиатура
 #include "device/vg/init.c"             // Видеоподсистема
+#include "device/disk/init.c"           // Дисковая подсистема
 
 // Ядро: код
 #include "core/irq.c"

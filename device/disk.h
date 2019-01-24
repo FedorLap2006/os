@@ -23,3 +23,15 @@
 #define DISK_DEV_SATAPI       2
 #define DISK_DEV_PATA         3
 #define DISK_DEV_SATA         4
+
+// Устройство ATA
+struct ATA_DEVICE {
+
+    word base;          // Базовый адрес
+    word start;         // Стартовый сектор (0 или 1)
+    word dev_ctl;       // Управляющий
+    byte type;          // Тип девайса, например ATADEV_PATA
+    byte identify[512]; // Информация от устройства
+};
+
+struct ATA_DEVICE ata_drive[4];  // 4 канала
