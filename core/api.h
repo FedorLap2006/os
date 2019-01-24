@@ -21,10 +21,19 @@ struct DriverVG {
 // Программируемые прерывания
 struct DriverPIC {
 
-    void (*keyboard)();             // Обработчик клавиатуры
-    void (*ps2mouse)();             // Обработчик мыши
+    void (*keyboard)();     // Обработчик клавиатуры
+    void (*ps2mouse)();     // Обработчик мыши
+};
+
+// Дисковый ввод-вывод
+struct DriverDISK {
+
+    void (*read)(byte, int, int, void*);          // Чтение сектора (bus|lba|num|dst)
+    void (*write)(byte, int, int, void*);         // Запись сектора (bus|lba|num|dst)
+    int  (*identify)(byte, void*);                // Получение конфигурации диска (bus|dst)
 };
 
 // Обработчик графикии
-struct DriverVG  vg;
-struct DriverPIC pic;
+struct DriverVG   vg;
+struct DriverPIC  pic;
+struct DriverDISK disk;

@@ -53,12 +53,12 @@ struct __attribute__((__packed__)) GDT_ptr {
 // Элемент GDT http://neurofox.net/sasm/14_descriptor
 struct __attribute__((__packed__)) GDT_item {
 
-    word    limit;
-    word    addrlo;     // 15:0  Адрес
-    byte     addrhl;     // 23:16 Адрес
-    byte     access;     //       Биты доступа и типов
-    byte     limithi;    // 19:16 Предел + GDXU-атрибуты
-    byte     addrhh;     // 31:24 Адрес
+    word limit;
+    word addrlo;     // 15:0  Адрес
+    byte addrhl;     // 23:16 Адрес
+    byte access;     //       Биты доступа и типов
+    byte limithi;    // 19:16 Предел + GDXU-атрибуты
+    byte addrhh;     // 31:24 Адрес
 };
 
 // 32-х битный дескриптор прерывания

@@ -98,14 +98,21 @@ void print(const char* s) {
 
     while (*so) {
 
-        vg.print(vg.cx, vg.cy, *so, 7, 0);
+        if (*so == 10) { // Перевод строки
 
-        vg.cx++;
-
-        // Перенос на следующую
-        if (vg.cx == 80) {
             vg.cx = 0;
             vg.cy++;
+
+        } else { // Печать символа
+
+            vg.print(vg.cx, vg.cy, *so, vg.fr, vg.bg);
+            vg.cx++;
+
+            // Перенос на следующую
+            if (vg.cx == 80) {
+                vg.cx = 0;
+                vg.cy++;
+            }
         }
 
         // Скроллинг

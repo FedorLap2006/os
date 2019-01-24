@@ -22,6 +22,6 @@
 void main() {
 
     kernel_init();
-    
+
     sti; for(;;);
 }

@@ -82,6 +82,6 @@ void init_vg() {
 
 	IoWrite8(0x3D4, 0x0B);
 	IoWrite8(0x3D5, (IoRead8(0x3E0) & 0xE0) | cursor_end);
-    
-    vg_cursor(0, 0);    
+
+    vg_cursor(0, 0);
 }

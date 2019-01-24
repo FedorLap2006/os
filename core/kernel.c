@@ -45,7 +45,7 @@ int create_gdt(dword address, dword limit, byte access) {
     qword  g;
 
     asm volatile("sgdt %0" : "=m"(g) : : "memory");
-    
+
     word   cnt = ((g & 0xFFFF) >> 3) + 1;
     word   found = 0;
     byte   granular = 0;
@@ -69,7 +69,7 @@ int create_gdt(dword address, dword limit, byte access) {
 
     // Свободного дескриптора нет, создать новый
     if (found == 0) {
-        
+
         found = cnt;
         g = (g & ~0xffff) | ((g & 0xffff) + 8);
         asm volatile("lgdt %0" : : "m"(g) : "memory");
