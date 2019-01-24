@@ -22,12 +22,6 @@
 void main() {
 
     kernel_init();
-
-    vg.cursor(0, 0);
-    
-    print_hex(0xF234ADCF, 16);
-    
-    // print("testing testing testing testing testing ");
     
     sti; for(;;);
 }
