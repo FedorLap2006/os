@@ -19,46 +19,15 @@ int disk_get_type(byte disk_id) {
     return DISK_DEV_UNKNOWN;
 }
 
-/** Обработчик прерывания от FDC */
-void fdc_irq() {
-
-    byte cyl;
-
-    switch (fdc.status) {
-        
-        /** Проверка статуса RESET */
-        case FDC_STATUS_SENSEI:
-
-            fdc_sensei();
-            break;
-
-        /** Поиск дорожки */
-        case FDC_STATUS_SEEK:
-
-            cyl = fdc_sensei();
-            // @todo запуск чтения или записи данных
-            break;
-
-        /** Чтение или запись */
-        case FDC_STATUS_RW:
-
-            if (fdc_get_result()) {
-                // произошла ошибка поиска
-            }
-
-            break;
-    }
-
-    fdc.irq_ready = 1;
-}
-
 void init_disk() {
 
     int device_id;
 
     // Диск выключен
-    fdc.irq_ready   = 0;
     fdc.status      = FDC_STATUS_NONE;
+    fdc.irq_ready   = 0;
+    fdc.enabled     = 0;
+    fdc.motor       = 0;
 
     // Назначить методы
     pic.fdc = & fdc_irq;

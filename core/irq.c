@@ -84,13 +84,21 @@ void irq_init(uint bitmask) {
     irq_make(0x2E, & IRQ_slave,    0x8E); // E
     irq_make(0x2F, & IRQ_slave,    0x8E); // F
 
-    // Инициализации
+    // 100 Hz системный таймер
+    IoWrite8(0x43, 0x34);
+    IoWrite8(0x40, 0x9B);
+    IoWrite8(0x40, 0x2E);
+
     timer = 0;
+}
+
+/** Получение значения таймера */
+dword get_timer() {
+    return timer;
 }
 
 /** Обработчик прерывания от таймера */
 void pic_timer() {
-
     timer++;
 }
 

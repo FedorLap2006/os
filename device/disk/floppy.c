@@ -13,7 +13,7 @@ void fdc_dma_init() {
     IoWrite8(0x04, 0x10);       // address to 0x10 (high byte)
 
     // Запись количества
-    IoWrite8(0x0C, 0xFF);       // reset the master flip-flop (again!!!)
+    IoWrite8(0x0C, 0xFF);       // reset the master flip-flop
     IoWrite8(0x05, 0xFF);       // count to 0x23ff (low byte)
     IoWrite8(0x05, 0x23);       // count to 0x23ff (high byte)
 
@@ -30,6 +30,11 @@ void fdc_dma_read() {
     IoWrite8(0x0A, 0x02);       // unmask DMA channel 2
 }
 
+/** Ожидание получения данных */
+void fdc_wait(int bits) {
+    while (((IoRead8(MAIN_STATUS_REGISTER)) & bits) != bits);
+}
+
 /** Подготовить диск на запись */
 void fdc_dma_write() {
 
@@ -38,38 +43,37 @@ void fdc_dma_write() {
     IoWrite8(0x0A, 0x02);       // unmask DMA channel 2
 }
 
-
 /** Запись данных */
 void fdc_write_reg(byte reg) {
 
-    while ((IoRead8(MAIN_STATUS_REGISTER) & 0x80) != 0x80);
+    fdc_wait(0x80);
     IoWrite8(DATA_FIFO, reg);
 }
 
 /** Чтение данных */
 byte fdc_read_reg() {
 
-    while ((IoRead8(MAIN_STATUS_REGISTER) & 0xC0) != 0xC0);
+    fdc_wait(0xc0);
     return IoRead8(DATA_FIFO);
 }
 
 /** Включение мотора */
 void fdc_motor_on() {
+
+    fdc.motor = 1;
+    fdc.timem = get_timer();
     IoWrite8(DIGITAL_OUTPUT_REGISTER, 0x1C);
 }
 
 /** Выключить мотор */
 void fdc_motor_off() {
+
+    fdc.motor = 0;
+    fdc.timem = 0;
     IoWrite8(DIGITAL_OUTPUT_REGISTER, 0);
 }
 
-/** Ожидание получения данных */
-void fdc_wait(int bits) {
-
-    while (((IoRead8(MAIN_STATUS_REGISTER)) & bits) != bits);
-}
-
-/** Проверить IRQ-статус после SEEK */
+/** Проверить IRQ-статус после SEEK/CALIBRATE/.. */
 byte fdc_sensei() {
 
     // Отправка запроса
@@ -134,7 +138,7 @@ int fdc_get_result() {
     fdc.head_start  = fdc_read_reg();
     fdc_read_reg();
 
-    return (fdc.st0 & 0xC0);
+    return (fdc.st0 & 0xc0);
 }
 
 /** Чтение и запись в DMA => IRQ #6
@@ -157,17 +161,16 @@ void fdc_rw(byte write, byte head, byte cyl, byte sector) {
     /* 8 */ fdc_write_reg(0xFF);    // Длина данных, игнорируется
 
     fdc.irq_ready = 0;
-    fdc.status = FDC_STATUS_RW;
+    fdc.status    = FDC_STATUS_RW;
 }
 
-/** Чтение сектора в $1000 */
-void fdc_read(int lba) {
+/** Конвертировать LBA -> CHS */
+void fdc_lba2chs(int lba) {
 
-}
-
-/** Запись сектора из $1000 */
-void fdc_write(int lba) {
-
+    fdc.r_sec = (lba % 18) + 1;
+    lba /= 18;
+    fdc.r_head = lba & 1;
+    fdc.r_cyl = (lba >> 1);
 }
 
 /** Поиск дорожки => IRQ #6 */
@@ -178,5 +181,69 @@ void fdc_seek(byte head, byte cyl) {
     fdc_write_reg(cyl);
 
     fdc.irq_ready = 0;
-    fdc.status = FDC_STATUS_SEEK;
+    fdc.status    = FDC_STATUS_SEEK;
+}
+
+/** Подготовить драйв к чтению/записи */
+void fdc_prepare(int lba) {
+
+    fdc_lba2chs(lba);
+
+    // Отметить, что ошибок пока нет
+    fdc.error = 0;
+
+    // Включить мотор, если нужно
+    if (fdc.motor == 0) { fdc_reset(); }
+
+    // Начать поиск дорожки
+    fdc_seek(fdc.r_head, fdc.r_cyl);
+
+    // Ждать IRQ
+    while (fdc.irq_ready == 0);
+}
+
+/** Чтение сектора в $1000 -> IRQ #6 */
+void fdc_read(int lba) {
+
+    fdc_prepare(lba); // Подготовка
+    fdc_dma_read();   // Настроить DMA на чтение
+    fdc_rw(0, fdc.r_head, fdc.r_cyl, fdc.r_sec); // Читать
+}
+
+/** Запись сектора из $1000 -> IRQ #6 */
+void fdc_write(int lba) {
+
+    fdc_prepare(lba); // Подготовка
+    fdc_dma_write();  // Настроить DMA на запись
+    fdc_rw(1, fdc.r_head, fdc.r_cyl, fdc.r_sec); // Писать
+}
+
+/** Обработчик прерывания от FDC */
+void fdc_irq() {
+
+    switch (fdc.status) {
+
+        /** Проверка статуса RESET */
+        case FDC_STATUS_SENSEI:
+
+            fdc_sensei();
+            break;
+
+        /** Поиск дорожки */
+        case FDC_STATUS_SEEK:
+
+            fdc.cyl = fdc_sensei();
+            break;
+
+        /** Чтение или запись */
+        case FDC_STATUS_RW:
+
+            if (fdc_get_result()) {
+                fdc.error = 1;
+            }
+
+            break;
+    }
+
+    fdc.irq_ready = 1;
 }

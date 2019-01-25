@@ -82,20 +82,27 @@ struct ATA_DEVICE {
 
 // Информация о FDC
 struct FDC_DEVICE {
+    
+    // Параметры
+    byte    enabled;            // Устройство присутствует
+    byte    motor;              // Мотор включен
+    dword   timem;              // Время включения мотора
+    
+    // Запрошенные параметры CHS
+    byte    r_cyl;
+    byte    r_head;
+    byte    r_sec;
 
+    // Результат
     byte    st0;
     byte    st1;
     byte    st2;
     byte    cyl;
     byte    head_end;
     byte    head_start;
+    byte    error;
 
-    /* status:
-     * 0 => выключен
-     * 1 => выполняется fdc_seek
-     * 2 => чтение или запись
-     */
-
+    // Для IRQ
     byte    status;
     volatile byte irq_ready;
 };
