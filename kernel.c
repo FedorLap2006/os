@@ -25,13 +25,9 @@
 void main() {
 
     kernel_init();
-
     sti;
 
-    brk;
-
-    fdc_read(0);    
-    while (fdc.irq_ready == 0);
+    // fdc_read(0); while (fdc.irq_ready == 0);
 
     for(;;);
 }

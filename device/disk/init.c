@@ -12,8 +12,11 @@ int disk_get_type(byte disk_id) {
         case 3: /* ata bus sec slave */
             return ata_drive[ disk_id ].type;
 
-        case 4: /* fd 0 */ break;
-        case 5: /* fd 1 */ break;
+        case 4: /* fd 0: primary */
+        case 5: /* fd 1: fail */
+        case 6: /* fd 2: fail */
+        case 7: /* fd 3: fail */
+            return fdc.enabled ? DISK_DEV_FLOPPY : DISK_DEV_UNKNOWN;
     }
 
     return DISK_DEV_UNKNOWN;
@@ -37,6 +40,8 @@ void init_disk() {
 
     // Подготовка DMA
     fdc_dma_init();
+    
+    // Проверить наличие FD
 
     // Просмотр всех ATA-устройств
     for (device_id = 0; device_id < 4; device_id++) {

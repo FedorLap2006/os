@@ -191,6 +191,7 @@ void fdc_prepare(int lba) {
 
     // Отметить, что ошибок пока нет
     fdc.error = 0;
+    fdc.timem = get_timer();
 
     // Включить мотор, если нужно
     if (fdc.motor == 0) { fdc_reset(); }

@@ -23,6 +23,7 @@
 #define DISK_DEV_SATAPI       2
 #define DISK_DEV_PATA         3
 #define DISK_DEV_SATA         4
+#define DISK_DEV_FLOPPY       5
 
 enum FloppyRegisters {
 
