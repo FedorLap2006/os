@@ -22,6 +22,7 @@ int disk_get_type(byte disk_id) {
     return DISK_DEV_UNKNOWN;
 }
 
+// Инициализация дисковой подсистемы
 void init_disk() {
 
     int device_id;
@@ -35,7 +36,7 @@ void init_disk() {
     // Назначить методы
     pic.fdc = & fdc_irq;
 
-    // Получение типа диска
+    // Прототипы
     disk.get_type = & disk_get_type;
 
     // Подготовка DMA
