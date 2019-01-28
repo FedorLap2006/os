@@ -2,6 +2,9 @@
         org     8000h
         macro   brk {  xchg    bx, bx }
 
+        cli
+        cld
+
         ; Переход в:
         ; mov     ax, 0012h ; графический режим
         mov     ax, 0003h ; текстовый режим
@@ -10,9 +13,6 @@
         ; Загрузка регистра GDT/IDT
         lgdt    [GDTR]
         lidt    [IDTR]
-
-        cli
-        cld
 
         ; Вход в Protected Mode
         mov     eax, cr0
@@ -42,8 +42,8 @@ pm:     mov     ax, 8
 
         ; Включить SSE
         mov     eax, cr0
-        and     ax, 0xFFFB              ; clear coprocessor emulation CR0.EM
-        or      ax, 0x2                 ; set coprocessor monitoring  CR0.MP
+        and     ax,  0xFFFB             ; clear coprocessor emulation CR0.EM
+        or      ax,  0x2                ; set coprocessor monitoring  CR0.MP
         mov     cr0, eax
         mov     eax, cr4
         or      ax, 3 shl 9             ; set CR4.OSFXSR and CR4.OSXMMEXCPT at the same time
